@@ -1,3 +1,5 @@
+import time
+
 class Ville:
     def __init__(self, nom, lat, long):
         self.nom = nom
@@ -65,8 +67,6 @@ def distanceBeetwen (loc1, loc2):
     return result / 4
 
 
-# print(distance)
-
 def getVilleByName(villeName):
     return dictionnaireVilles[villeName]
 
@@ -78,6 +78,7 @@ def sortByLowest(voisins, ville):
         dict[voisin.nom] = distance
 
     return {k: v for k, v in sorted(dict.items(), key=lambda item: item[1])}
+
 
 def shortestRoute(start, end):
     global count
@@ -132,7 +133,9 @@ def shortestRoute(start, end):
     print(count)
 
 
-
+start = time.time()
 shortestRoute(villeDepart, villeArriver)
+end = time.time()
+print(end - start)
 # plusProche = Closest(villeDepart)
 # print(plusProche)

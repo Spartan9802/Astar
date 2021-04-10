@@ -1,8 +1,8 @@
-import main
+from master import main
 import matplotlib.pyplot as plt
 
 dictionnaireVilles = {}
-main.charger(dictionnaireVilles,"FRANCE.MAP")
+main.charger(dictionnaireVilles, "FRANCE.MAP")
 print(dictionnaireVilles)
 
 coords = []

@@ -4,6 +4,7 @@ from DataBase import FileLoader
 fileLoader = FileLoader("FRANCE.MAP")
 dictionnaireVilles = fileLoader.parse()
 
+# Récupére la distance entre deux positions
 def distanceBetween(loc1, loc2):
     result = abs(loc1[0] - loc2[0]) + abs(loc1[1] - loc2[1])
     return result / 4
@@ -22,7 +23,7 @@ def sortByLowest(voisins, ville):
     return {k: v for k, v in sorted(voisins.items(), key=sortByDistance)}
 
 
-
+# Calcul le chemin le plus rapide entre deux villes
 def shortestRoute(start, end):
     global count
     count = 0

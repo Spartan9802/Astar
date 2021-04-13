@@ -1,22 +1,20 @@
 import time
 from DataBase import FileLoader
+from Villes import Villes
 
 fileLoader = FileLoader("FRANCE.MAP")
-dictionnaireVilles = fileLoader.parse()
+Villes.addVilles(fileLoader.parse())
 
 # Récupére la distance entre deux positions
 def distanceBetween(loc1, loc2):
     result = abs(loc1[0] - loc2[0]) + abs(loc1[1] - loc2[1])
     return result / 4
 
-# Récupére l'instance de la class Ville par le nom dans le dictionaire
-def getVilleByName(villeName):
-    return dictionnaireVilles[villeName]
 
 # Trie les voisins du plus petit au plus grand en fonction de leurs distance avec l'arrivé
 def sortByLowest(voisins, ville):
     def sortByDistance(item):
-        item = getVilleByName(item[0])
+        item = Villes.getVilleByName(item[0])
         distance = distanceBetween([ville.lat, ville.long], [item.lat, item.long])
         return distance
 
@@ -28,8 +26,8 @@ def shortestRoute(start, end):
     global count
     count = 0
 
-    villeDepart = getVilleByName(start)
-    villeArriver = getVilleByName(end)
+    villeDepart = Villes.getVilleByName(start)
+    villeArriver = Villes.getVilleByName(end)
     global minWeight, path
     minWeight = None
     path = []
@@ -38,7 +36,7 @@ def shortestRoute(start, end):
         global count, minWeight, path
         count += 1
 
-        ville = getVilleByName(villeName)
+        ville = Villes.getVilleByName(villeName)
         voisins = sortByLowest(ville.voisins, villeArriver)
 
         if ville.nom in closedList:

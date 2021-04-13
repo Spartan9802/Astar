@@ -27,15 +27,15 @@ class FileLoader:
 
             return voisins
 
-        villes = {}
+        villes = []
 
         for i in range(0, len(self.lignes)):
             ligne = self.lignes[i]
             if len(ligne.split()) == 3:
                 (nom, lat, long) = ligne.split()
                 ville = Ville(nom, lat, long)
-                villes.update({ville.nom: ville})
                 voisins = parseSubLignes(self.lignes, i)
                 ville.voisins = voisins
+                villes.append(ville)
 
         return villes

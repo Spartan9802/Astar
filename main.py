@@ -74,10 +74,10 @@ def shortestRoute(start, end):
     print(path, minWeight)
 
 
-villeDepart = input('Entrer le nom de la ville d\'épart:')
-villeArriver = input('Entrer le nom de la ville d\'arrivé:')
+villeDepart = input('Entrer le nom de la ville d\'épart: ')
+villeArriver = input('Entrer le nom de la ville d\'arrivé: ')
 
 start = time.time()
 shortestRoute(villeDepart, villeArriver)
 end = time.time()
-print(end - start)
+print('Temps écoulé: ', end - start)

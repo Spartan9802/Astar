@@ -1,4 +1,4 @@
-from master import main
+import main
 import matplotlib.pyplot as plt
 
 dictionnaireVilles = {}

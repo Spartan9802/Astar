@@ -43,7 +43,7 @@ def charger(dicVilles, file):
 
 
 dictionnaireVilles = {}
-charger(dictionnaireVilles, "./FRANCE.MAP")
+charger(dictionnaireVilles, "FRANCE.MAP")
 print(dictionnaireVilles)
 print(dictionnaireVilles["Calais"].voisins)
 

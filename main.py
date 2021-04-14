@@ -28,6 +28,7 @@ def shortestRoute(start, end):
 
     villeDepart = Villes.getVilleByName(start)
     villeArriver = Villes.getVilleByName(end)
+
     global minWeight, path
     minWeight = None
     path = []
@@ -53,7 +54,7 @@ def shortestRoute(start, end):
             if k == villeDepart.nom:
                 continue
 
-            if k == end:
+            if k == villeArriver.nom:
                 minWeight = weight + v
                 path = parents.copy()
 

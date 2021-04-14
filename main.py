@@ -2,7 +2,7 @@ import time
 from DataBase import FileLoader
 from Villes import Villes
 
-fileLoader = FileLoader("FRANCE.MAP")
+fileLoader = FileLoader("../FRANCE.MAP")
 Villes.addVilles(fileLoader.parse())
 
 # Récupére la distance entre deux positions
@@ -69,14 +69,13 @@ def shortestRoute(start, end):
         else:
             explore(k, v, [])
 
-    print(count)
-    print(path, minWeight)
+    return {'paths': [start, *path, end], 'minWeight': minWeight}
 
 
-villeDepart = input('Entrer le nom de la ville d\'épart: ')
-villeArriver = input('Entrer le nom de la ville d\'arrivé: ')
+# villeDepart = input('Entrer le nom de la ville d\'épart: ')
+# villeArriver = input('Entrer le nom de la ville d\'arrivé: ')
 
 start = time.time()
-shortestRoute(villeDepart, villeArriver)
+# shortestRoute(villeDepart, villeArriver)
 end = time.time()
 print('Temps écoulé: ', end - start)

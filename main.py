@@ -1,8 +1,7 @@
-import time
 from DataBase import FileLoader
 from Villes import Villes
 
-fileLoader = FileLoader("../FRANCE.MAP")
+fileLoader = FileLoader("./FRANCE.MAP")
 Villes.addVilles(fileLoader.parse())
 
 # Récupére la distance entre deux positions
@@ -33,7 +32,7 @@ def shortestRoute(start, end):
     minWeight = None
     path = []
 
-    def explore(villeName, weight, parents=[]):
+    def explore(villeName, weight, parents={}):
         global count, minWeight, path
         count += 1
 
@@ -43,8 +42,7 @@ def shortestRoute(start, end):
         if ville.nom in closedList:
             return
         closedList.append(ville.nom)
-        parents.append(ville.nom)
-
+        parents[ville.nom] = weight
 
         for k, v in voisins.items():
 
@@ -56,7 +54,9 @@ def shortestRoute(start, end):
 
             if k == villeArriver.nom:
                 minWeight = weight + v
-                path = parents.copy()
+                parents2 = parents.copy()
+                parents2[k] = v
+                path = parents2
 
 
             elif k is not end and k not in parents:
@@ -66,17 +66,11 @@ def shortestRoute(start, end):
     for k, v in voisins.items():
         closedList = []
         if k == end:
-            return
+            path = {villeDepart.nom: 0, k: v}
+            minWeight = v
+            break
         else:
-            explore(k, v, [])
+            explore(k, v, {villeDepart.nom: 0})
+    return {'paths': path, 'minWeight': minWeight}
 
-    return {'paths': [start, *path, end], 'minWeight': minWeight}
 
-
-# villeDepart = input('Entrer le nom de la ville d\'épart: ')
-# villeArriver = input('Entrer le nom de la ville d\'arrivé: ')
-
-start = time.time()
-# shortestRoute(villeDepart, villeArriver)
-end = time.time()
-print('Temps écoulé: ', end - start)

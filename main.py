@@ -21,7 +21,6 @@ def sortByLowest(voisins, ville):
         item = Villes.getVilleByName(item[0])
         distance = distanceBetween([ville.lat, ville.long], [item.lat, item.long])
         return distance
-
     return {k: v for k, v in sorted(voisins.items(), key=sortByDistance)}
 
 
@@ -49,6 +48,9 @@ def shortestRoute(start, end):
         for k, v in voisins.items():
 
             if minWeight is not None and minWeight < (somme(parents.values()) + v):
+                continue
+
+            if k in parents.keys():
                 continue
 
             if k == villeDepart.nom:

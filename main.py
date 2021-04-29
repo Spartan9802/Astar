@@ -1,7 +1,10 @@
 from DataBase import FileLoader
 from Villes import Villes
+import os
+THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
+franceMap = os.path.join(THIS_FOLDER, 'FRANCE.MAP')
 
-fileLoader = FileLoader("./FRANCE.MAP")
+fileLoader = FileLoader(franceMap)
 Villes.addVilles(fileLoader.parse())
 
 # Récupére la distance entre deux positions

@@ -34,9 +34,7 @@ def exist(ville):
     return jsonify({'status': Villes.villeExist(ville)})
 
 
-@app.route('/api/villes/')
-def getVilleByName(name):
-    return jsonify({'villes': Villes.villes})
+
 
 if __name__ == '__main__':
     app.config['JSON_AS_ASCII'] = False

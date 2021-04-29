@@ -4,6 +4,7 @@ from flask import Flask, jsonify
 from flask_cors import CORS
 from Villes import Villes
 import requests
+import os
 
 global villes
 
@@ -11,6 +12,7 @@ hereApi = 'jwdvUmFcg-KUIdCUxcs7doiBx03uipAbTsgvfr-VNT0'
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
 CORS(app, resources={r"/api/*": {"origins": "*"}})
+geocodeFile = os.path.join(main.THIS_FOLDER, 'geocodes.json')
 
 
 @app.route('/api/<name>/')
@@ -50,7 +52,7 @@ def getGeocode(address):
 
 def loadGeocodes():
     global villes
-    with open('./geocodes.json', 'r') as file:
+    with open(geocodeFile, 'r') as file:
         villes = json.load(file)
 
 @app.route('/api/villes/')

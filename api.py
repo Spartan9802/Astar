@@ -9,6 +9,7 @@ global villes
 
 hereApi = 'jwdvUmFcg-KUIdCUxcs7doiBx03uipAbTsgvfr-VNT0'
 app = Flask(__name__)
+app.config['JSON_SORT_KEYS'] = False
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 

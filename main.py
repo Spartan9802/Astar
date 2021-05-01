@@ -1,11 +1,17 @@
 from DataBase import FileLoader
 from Villes import Villes
-import os
-THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
-franceMap = os.path.join(THIS_FOLDER, 'FRANCE.MAP')
+import json
 
-fileLoader = FileLoader(franceMap)
+
+fileLoader = FileLoader('FRANCE.MAP')
 Villes.addVilles(fileLoader.parse())
+
+global villes
+def loadGeocodes():
+    global villes
+    with open('geocodes.json', 'r') as file:
+        villes = json.load(file)
+loadGeocodes()
 
 # Récupére la distance entre deux positions
 def distanceBetween(loc1, loc2):
@@ -29,8 +35,6 @@ def sortByLowest(voisins, ville):
 
 # Calcul le chemin le plus rapide entre deux villes
 def shortestRoute(start, end):
-    global count
-    count = 0
 
     villeDepart = Villes.getVilleByName(start)
     villeArriver = Villes.getVilleByName(end)
@@ -40,8 +44,7 @@ def shortestRoute(start, end):
     path = []
 
     def explore(villeName, weight, parents={}):
-        global count, minWeight, path
-        count += 1
+        global minWeight, path
 
         ville = Villes.getVilleByName(villeName)
         voisins = sortByLowest(ville.voisins, villeArriver)

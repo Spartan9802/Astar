@@ -1,67 +1,53 @@
-import json
+from flask import Flask, jsonify, make_response
+from flask_restplus import Resource, Api
+from json2xml import json2xml
+
 import main
-from flask import Flask, jsonify
-from flask_cors import CORS
 from Villes import Villes
-import requests
-import os
 
-global villes
-
-hereApi = 'jwdvUmFcg-KUIdCUxcs7doiBx03uipAbTsgvfr-VNT0'
 app = Flask(__name__)
+api = Api(app, title='ProjetLPI - Astar', description='Un projet scolaire pour comprendre l\'algo Astar', default='Astar API' )
+
 app.config['JSON_SORT_KEYS'] = False
-CORS(app, resources={r"/api/*": {"origins": "*"}})
-geocodeFile = os.path.join(main.THIS_FOLDER, 'geocodes.json')
+app.config['JSON_AS_ASCII'] = False
 
 
-@app.route('/api/<name>/')
-def getVilleByName(name):
-    ville = Villes.getVilleByName(name)
-    if ville:
-        return jsonify({
-            'name': ville.nom,
-            'latitude': ville.lat,
-            'longitude': ville.long,
-            'voisins': ville.voisins
-        }), 200
-    return jsonify({'error': 'Ville introuvable'})
+@api.representation('application/xml')
+def xml(data, code, headers):
+    resp = make_response(json2xml.Json2xml(data).to_xml(), code)
+    resp.headers.extend(headers)
+    return resp
 
 
-@app.route('/api/<ville1>/<ville2>/')
-def routeBetween(ville1, ville2):
-    if Villes.villeExist(ville1) and Villes.villeExist(ville2):
-        route = main.shortestRoute(ville1, ville2)
-        if route:
-            return jsonify(route)
-        return jsonify({'error': 'Route introuvable'})
-    return jsonify({'error': 'Une des villes n\'existe pas'})
+@api.route('/villes/')
+@api.doc(description="Retourne la liste des villes avec le geocodage réel")
+class Ville(Resource):
+
+    def get(self):
+        return main.villes
+
+@api.route('/villes/<string:ville>')
+@api.doc(params={'ville': 'Est une ville'}, description="Retourne les informations d'une ville")
+class Ville(Resource):
+
+    def get(self, ville):
+        ville_obj = Villes.getVilleByName(ville)
+        if ville_obj:
+            return ville_obj.__dict__
+        return jsonify({'error': 'Ville introuvable'})
+
+@api.route('/trajet/<string:start>/<string:end>')
+@api.doc(params={'start': 'Est la ville de départ', 'end': 'Est la ville d\'arrivé'}, description="Retourne le trajet le plus court entre deux villes")
+class Trajet(Resource):
+
+    def get(self, start, end):
+        if Villes.villeExist(start) and Villes.villeExist(end):
+            route = main.shortestRoute(start, end)
+            if route:
+                return route
+            return jsonify({'error': 'Route introuvable'})
+        return jsonify({'error': 'Une des villes n\'existe pas'})
 
 
-@app.route('/api/exist/<ville>')
-def exist(ville):
-    return jsonify({'status': Villes.villeExist(ville)})
-
-
-def getGeocode(address):
-    url = "https://geocoder.ls.hereapi.com/search/6.2/geocode.json?languages=fr-FR&maxresults=1&searchtext=" + address + "&apiKey=" + hereApi
-    response = requests.get(url)
-    json = response.json()
-    return json['Response']['View'][0]['Result'][0]['Location']['DisplayPosition']
-
-
-def loadGeocodes():
-    global villes
-    with open(geocodeFile, 'r') as file:
-        villes = json.load(file)
-
-@app.route('/api/villes/')
-def getVilles():
-    global villes
-    return jsonify({'villes': villes})
-
-
-loadGeocodes()
 if __name__ == '__main__':
-    app.config['JSON_AS_ASCII'] = False
     app.run(debug=True, host="0.0.0.0")

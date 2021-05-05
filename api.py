@@ -1,15 +1,30 @@
-from flask import Flask, jsonify, make_response
+import json
+
+from flask import Flask, jsonify, make_response, request
 from flask_restplus import Resource, Api
+from flask_bcrypt import generate_password_hash, check_password_hash, Bcrypt
+from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
+from flask_cors import CORS
 from json2xml import json2xml
 
 import main
 from Villes import Villes
+from Auth import Auth
 
 app = Flask(__name__)
 api = Api(app, title='ProjetLPI - Astar', description='Un projet scolaire pour comprendre l\'algo Astar', default='Astar API' )
+bcrypt = Bcrypt(app)
+app.config['JWT_SECRET_KEY'] = 'A@6?NAcYLa?!Y#os5aSCxXHB49r'
+jwt = JWTManager(app)
+
 
 app.config['JSON_SORT_KEYS'] = False
 app.config['JSON_AS_ASCII'] = False
+CORS(app, resources={r"/*": {"origins": "*"}})
+
+users = {
+    "admin": generate_password_hash("admin").decode('utf8')
+}
 
 
 @api.representation('application/xml')
@@ -25,6 +40,9 @@ class Ville(Resource):
 
     def get(self):
         return main.villes
+
+    def post(self):
+        return
 
 @api.route('/villes/<string:ville>')
 @api.doc(params={'ville': 'Est une ville'}, description="Retourne les informations d'une ville")
@@ -48,6 +66,27 @@ class Trajet(Resource):
             return jsonify({'error': 'Route introuvable'})
         return jsonify({'error': 'Une des villes n\'existe pas'})
 
+
+@api.route('/admin/login')
+@api.doc(params={'username': 'Est le nom de l\'utilisateur', 'password': 'Est le mot de passe'}, description="Connecte un utilisateur en stockant un jeton jwt dans les cookies")
+class Login(Resource):
+    def post(self):
+        return Auth.login()
+
+@api.route('/admin/logout')
+@api.doc(description="Déconnecte un utilisateur en supprimant le jeton de ces cookies")
+class Logout(Resource):
+    @jwt_required()
+    def get(self):
+        return Auth.logout()
+
+
+@api.route('/admin')
+class Admin(Resource):
+    @jwt_required()
+    def get(self):
+        arr = [ob.__dict__ for ob in Villes.villes.values()]
+        return jsonify({'villes': arr})
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0")

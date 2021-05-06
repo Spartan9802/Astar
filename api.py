@@ -1,7 +1,7 @@
 import json
 
 from flask import Flask, jsonify, make_response, request
-from flask_restplus import Resource, Api
+from flask_restplus import Resource, Api, fields
 from flask_bcrypt import generate_password_hash, check_password_hash, Bcrypt
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 from flask_cors import CORS
@@ -68,8 +68,14 @@ class Trajet(Resource):
 
 
 @api.route('/admin/login')
-@api.doc(params={'username': 'Est le nom de l\'utilisateur', 'password': 'Est le mot de passe'}, description="Connecte un utilisateur en stockant un jeton jwt dans les cookies")
+@api.doc(description="Connecte un utilisateur en stockant un jeton jwt dans les cookies")
 class Login(Resource):
+    resource_fields = api.model('Login', {
+        'username': fields.String,
+        'password': fields.String,
+    })
+
+    @api.expect(resource_fields)
     def post(self):
         return Auth.login()
 
@@ -88,5 +94,6 @@ class Admin(Resource):
         arr = [ob.__dict__ for ob in Villes.villes.values()]
         return jsonify({'villes': arr})
 
+
 if __name__ == '__main__':
-    app.run(debug=True, host="0.0.0.0")
+    app.run(debug=False, host="0.0.0.0")
